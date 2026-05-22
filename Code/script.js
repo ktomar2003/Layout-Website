@@ -1,20 +1,25 @@
-// Animated Counter 
-let clientCount = 0;
-let projectCount = 0;
-let leadsCount = 0;
+// Count-up on scroll (Case Study stats)
+const counters = document.querySelectorAll('.count-up');
 
-let clients = document.getElementById("clients");
-let projects = document.getElementById("projects");
-let leads = document.getElementById("leads");
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            counters.forEach(counter => {
+                const target = parseInt(counter.dataset.target);
+                let count = 0;
+                const step = Math.ceil(target / 60);
+                const interval = setInterval(() => {
+                    count += step;
+                    if (count >= target) {
+                        count = target;
+                        clearInterval(interval);
+                    }
+                    counter.textContent = count + '%';
+                }, 25);
+            });
+            observer.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.5 });
 
-let counter = setInterval(() => {
-    clientCount++;
-    projectCount++;
-    leadsCount += 5;
-    clients.innerText = clientCount + "+";
-    projects.innerText = projectCount + "+";
-    leads.innerText = leadsCount + "+";
-    if (clientCount == 120) {
-        clearInterval(counter);
-    }
-}, 40);
+observer.observe(document.querySelector('.case-stats'));
